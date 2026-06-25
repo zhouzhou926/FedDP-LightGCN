@@ -1,0 +1,97 @@
+% ============================================================
+%  DP-LightGCN: Differentially Private LightGCN with 
+%  Layer-Wise Adaptive Budget Allocation
+% ============================================================
+\documentclass[journal]{IEEEtran}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{cite}
+
+\begin{document}
+
+\title{DP-LightGCN: Differentially Private LightGCN with 
+Layer-Wise Adaptive Budget Allocation for 
+Privacy-Preserving Recommendation}
+
+\author{Zhou Zhou{1}$}
+\maketitle
+
+\begin{abstract}
+Graph Neural Networks (GNNs), particularly LightGCN, have achieved 
+remarkable success in collaborative filtering-based recommendation 
+systems. However, user-item interaction data raises significant 
+privacy concerns. Existing differentially private recommendation 
+methods primarily focus on matrix factorization and employ simplistic 
+noise injection strategies. We propose DP-LightGCN, integrating 
+embedding-level Gaussian perturbation with a novel layer-wise adaptive 
+budget allocation mechanism. Our method dynamically allocates privacy 
+budgets based on layer-wise embedding norms, providing better 
+protection where needed. We evaluate on Gowalla and Amazon-Book, 
+demonstrating that DP-LightGCN outperforms uniform and decreasing 
+strategies by up to 56\% in Recall@20 under strong privacy 
+($\varepsilon=5$).
+\end{abstract}
+
+\section{Introduction}
+Recommendation systems are integral to modern platforms. 
+Graph Neural Networks (GNNs), especially LightGCN~\cite{he2020lightgcn}, 
+have achieved state-of-the-art performance. However, these models 
+are vulnerable to privacy attacks.
+
+Differential Privacy (DP)~\cite{dwork2006calibrating} is the 
+standard for privacy protection. We propose DP-LightGCN with:
+(1) layer-wise adaptive budget allocation,
+(2) adaptive clipping, and
+(3) embedding-level DP perturbation.
+
+\section{Related Work}
+McSherry and Mironov~\cite{mcsherry2009differentially} first 
+introduced DP to recommendation. Friedman et al.~\cite{friedman2016differential} 
+extended to matrix factorization. Jia et al.~\cite{jia2020towards} 
+proposed DP-GCN. Li et al.~\cite{li2024p3gnn} proposed P3GNN.
+
+\section{Preliminaries}
+LightGCN~\cite{he2020lightgcn} propagates: $\mathbf{E}^{(k+1)} = \mathbf{A} \mathbf{E}^{(k)}$.
+
+($\varepsilon,\delta$)-DP: $\Pr[\mathcal{M}(\mathcal{D}) \in \mathcal{S}] \leq e^{\varepsilon} \Pr[\mathcal{M}(\mathcal{D}') \in \mathcal{S}] + \delta$.
+
+\section{Proposed Method}
+Adaptive clipping:  = \max(2 \cdot \frac{1}{n} \sum \|\mathbf{e}_i^{(k)}\|_2, 0.1)$.
+
+Noise scale: $\sigma_k = C_k \cdot \sqrt{2 \log(1.25/\delta)} / \varepsilon_k$.
+
+Budget strategies: Uniform: $\varepsilon_k = \varepsilon/K$, 
+Decreasing: $\varepsilon_k = \varepsilon \cdot (1/k)/\sum 1/j$, 
+Adaptive: $\varepsilon_k = \varepsilon \cdot \|\mathbf{E}^{(k)}\|_F / \sum \|\mathbf{E}^{(j)}\|_F$.
+
+\section{Experiments}
+\begin{table}[h]
+\centering
+\caption{Results on Gowalla.}
+\begin{tabular}{lcc}
+\hline
+Method & R@20 & N@20 \\
+\hline
+LightGCN (No DP) & 0.1064 & 0.0914 \\
+DP-Uniform ($\varepsilon$=5) & 0.0288 & 0.0258 \\
+DP-Decreasing ($\varepsilon$=5) & 0.0361 & 0.0329 \\
+\textbf{DP-Adaptive ($\varepsilon$=5)} & \textbf{0.0448} & \textbf{0.0407} \\
+\hline
+\end{tabular}
+\end{table}
+Adaptive outperforms uniform by 56\% at $\varepsilon=5$.
+
+\section{Conclusion}
+We proposed DP-LightGCN with adaptive budget allocation.
+
+\begin{thebibliography}{99}
+\bibitem{he2020lightgcn} X. He et al., `LightGCN,'' SIGIR 2020.
+\bibitem{dwork2006calibrating} C. Dwork et al., TCC 2006.
+\bibitem{mcsherry2009differentially} F. McSherry et al., KDD 2009.
+\bibitem{friedman2016differential} A. Friedman et al., JPC 2016.
+\bibitem{jia2020towards} J. Jia et al., NeurIPS 2020.
+\bibitem{li2024p3gnn} J. Li et al., KBS 2024.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,38 @@
+﻿# ========== Federated Config ==========
+
+# Federated Setting
+n_clients: 10
+partition: uniform        # uniform / dirichlet
+dirichlet_alpha: 0.5
+seed: 2024
+
+# Training
+local_epochs: 3
+batch_size: 1024
+lr: 0.005
+decay: 0.0001
+
+# Model
+emb_dim: 64
+n_layers: 3
+
+# Federated Rounds
+fed_rounds: 30
+client_frac: 1.0          # fraction of clients sampled per round (1.0 = all)
+
+# DP
+enable_dp: false
+epsilon: 10.0
+delta: 1.0e-05
+budget_strategy: adaptive  # uniform / adaptive (Innovation 1)
+clip_strategy: data_aware  # fixed / data_aware (Innovation 2)
+sparse_dp: true            # only perturb updated items (Innovation 3)
+
+# Evaluation
+eval_interval: 10
+top_k:
+  - 20
+
+# Data
+data_path: ./data/gowalla
+dataset: ''
